@@ -18,7 +18,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
         title: const Text('Add Exercise Detail'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(), // Return to previous screen without data
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Column(

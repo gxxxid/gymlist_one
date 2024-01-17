@@ -84,6 +84,7 @@ class CheckInScreenState extends State<CheckInScreen> {
           checkInTime: checkInTime,),
       ),
     );
+
     if (result != null) {
       setState(() {
         exercises.add('${result['exerciseName']}');

@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'dto.dart';
 
+
 class RoutineDAO{
   //Box<Routine> routineBox;
   Box<Routine> routineBox = Hive.box<Routine>('routineBox');
@@ -14,6 +15,16 @@ class RoutineDAO{
   Future<void> createARoutine(String routineName, DateTime startDate, int goalHour) async {
     final routine = Routine(routineName: routineName, startDate: startDate, goalHour: goalHour);
     await routineBox.put(routineName, routine);
+  }
+
+  Future<DateTime?> getRoutineDateByName(String routineName) async {
+    Routine? routine = routineBox.get(routineName);
+    return routine?.startDate;
+  }
+
+  Future<int?> getRoutineGoalByName(String routineName) async {
+    Routine? routine = routineBox.get(routineName);
+    return routine?.goalHour;
   }
 
   Future<void> deleteRoutine(String routineName) async {
@@ -43,12 +54,17 @@ class CheckInDAO{
         isSameDay(checkIn.checkInTime, checkInDate))
         .toList();
   }
-  //helper function
-  bool isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+  Future<double> getTotalHourByDate(String routineName, DateTime checkInDate) async {
+    var checkIns = await getCheckInByRoutineNDate(routineName, checkInDate);
+    double totalHours = 0.0;
+
+    for (var checkIn in checkIns) {
+      totalHours += checkIn.workHour;
+    }
+
+    return totalHours;
   }
+
 }
 
 class ExerciseDAO{
@@ -71,7 +87,6 @@ class ExerciseInCheckInDAO {
       String routineName,
       DateTime checkInTime,
       List<ExerciseDetail> exerciseDetails) async {
-    // Find or create an ExerciseInCheckIn instance
     ExerciseInCheckIn? checkIn = exerciseInCheckInBox.values.firstWhere(
           (ci) => ci.checkInTime == checkInTime && ci.routineName == routineName,
       orElse: () => ExerciseInCheckIn(
@@ -80,6 +95,7 @@ class ExerciseInCheckInDAO {
         checkInTime: checkInTime,
       ),
     );
+
 
     //checkIn.exerciseDetails ??= HiveList(exerciseDetailBox);
 
@@ -90,13 +106,20 @@ class ExerciseInCheckInDAO {
     await checkIn.save();
   }
 
+  Future<int> getExerciseCountByDate(String routineName, DateTime checkInDate) async {
+    var allExercises = exerciseInCheckInBox.values.where((exercise) =>
+    exercise.routineName == routineName &&
+        isSameDay(exercise.checkInTime, checkInDate)).toList();
+
+    return allExercises.length;
+  }
+
   Future<void> updateExerciseInCheckIn(
       String exerciseName,
       String routineName,
       DateTime checkInTime,
       DateTime checkInDate,
       List<ExerciseDetail> updatedDetails) async {
-    // Find the ExerciseInCheckIn object
     final checkInIndex = exerciseInCheckInBox.values.toList().indexWhere(
           (ci) => ci.exerciseName == exerciseName &&
           ci.routineName == routineName &&
@@ -109,7 +132,7 @@ class ExerciseInCheckInDAO {
 
       if (checkIn != null) {
         for (var detail in updatedDetails) {
-          exerciseDetailBox.add(detail); // Add updated details
+          exerciseDetailBox.add(detail);
         }
       }
     }
@@ -142,5 +165,11 @@ class ExerciseInCheckInDAO {
     }
   }
 
+}
+
+bool isSameDay(DateTime date1, DateTime date2) {
+  return date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
 }
 

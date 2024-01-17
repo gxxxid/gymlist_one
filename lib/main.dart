@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dao.dart';
 import 'dto.dart';
 import 'add_routine_screen.dart';
+import 'calender_edit_screen.dart';
 
 
 Future<void> main() async{
@@ -145,6 +146,12 @@ class _RoutineTileState extends State<RoutineTile> {
     ));
   }
 
+  void _navigateToCalenderScreen() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CalendarEditScreen(routineName: widget.routineName),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return isExpanded
@@ -166,7 +173,7 @@ class _RoutineTileState extends State<RoutineTile> {
           ElevatedButton(
             child: Text('Edit'),
             onPressed: () {
-              // Implement edit functionality
+              _navigateToCalenderScreen();
             },
           ),
           ElevatedButton(

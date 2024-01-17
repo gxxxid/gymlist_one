@@ -99,14 +99,14 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
                     onPressed: _navigateToAddExerciseDetail,
                     child: Icon(Icons.add),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _submitForm,
                     child: Text('Confirm'),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: 50, vertical: 20),
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
